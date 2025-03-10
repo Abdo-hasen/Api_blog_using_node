@@ -34,11 +34,17 @@ app.use(xss());
 app.use(hpp());
 app.use(limiter);
 
-// ROUTES
+// Root route
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Welcome to the Blog API!" });
+});
+
+// Other routes
 const V1_PREFIX = "/api/v1";
 app.use(`${V1_PREFIX}/users`, usersRoutes);
 app.use(`${V1_PREFIX}/posts`, postsRoutes);
-// handling not found routes
+
+// 404 Not Found handler
 app.use((req, res, next) => {
   next(new APIError(`${req.method} ${req.path} is not found`, 404));
 });
@@ -46,8 +52,8 @@ app.use((req, res, next) => {
 // Global error handler middleware
 app.use(errorHandler);
 
-const PORT = process.env.PORT;
-const MONGO_URI = process.env.MONGO_URI;
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/blog-api";
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
